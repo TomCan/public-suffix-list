@@ -1,0 +1,19 @@
+{
+  "name": "tomcan/public-suffix-list",
+  "description": "A PHP consumable version of the DNS top level domains public suffix list from publicsuffix.org.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tom Cannaerts",
+      "email": "mot@tom.be"
+    }
+  ],
+  "require": {
+    "php": ">=5.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "TomCan\\PublicSuffixList\\": "src/"
+    }
+  }
+}
