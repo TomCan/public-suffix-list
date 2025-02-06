@@ -1,3 +1,3 @@
-version=v2.2.0
+version=v3.0.0
 icann=49e6836cfd8d407bbbb64212f2a580badf134fa3
 full=d22a4a0ebed851881a46145633e8f5938ea9d4fd
