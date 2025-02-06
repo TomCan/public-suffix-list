@@ -6,7 +6,8 @@ abstract class AbstractPSL
 {
     protected $lists = array();
 
-    public function isTld($tld) {
+    public function isTld($tld)
+    {
         // trim, but also trim dot
         $tld = trim($tld, " \n\r\t\v\x00.");
         foreach ($this->lists as $list) {
@@ -18,7 +19,8 @@ abstract class AbstractPSL
         return false;
     }
 
-    public function getType($tld) {
+    public function getType($tld)
+    {
         // trim, but also trim dot
         $tld = trim($tld, " \n\r\t\v\x00.");
         foreach ($this->lists as $type => $list) {
@@ -30,7 +32,8 @@ abstract class AbstractPSL
         return null;
     }
 
-    public function getTldOfDomain($domain) {
+    public function getTldOfDomain($domain)
+    {
         // trim, but also trim dot
         $domain = trim($domain, " \n\r\t\v\x00.");
         while ('' !== $domain) {
@@ -49,11 +52,13 @@ abstract class AbstractPSL
         return null;
     }
 
-    public function getLists() {
+    public function getLists()
+    {
         return $this->lists;
     }
 
-    public function getFullList() {
+    public function getFullList()
+    {
         $ret = array();
         foreach ($this->lists as $list) {
             $ret = array_merge($ret, $list);
