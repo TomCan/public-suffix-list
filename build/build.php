@@ -109,6 +109,9 @@ if ($list = file_get_contents($url)) {
     throw new RuntimeException('Could not download public prefix list.');
 }
 
+/**
+ * @param string[] $values
+ */
 function makeArrayString(string $name, array $values, string $indent = '    '): string
 {
     $prev = '';
