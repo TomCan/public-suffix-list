@@ -48,7 +48,7 @@ EOF;
     if (sha1($content) != $meta['icann']) {
         $updated = true;
         $meta['icann'] = sha1($content);
-        file_put_contents(__DIR__.'/../src/tomcan/'.$name.'.php', $content);
+        file_put_contents(__DIR__.'/../src/'.$name.'.php', $content);
     }
 
     $name = 'PSLFull';
@@ -67,7 +67,7 @@ EOF;
     if (sha1($content) != $meta['full']) {
         $updated = true;
         $meta['full'] = sha1($content);
-        file_put_contents(__DIR__.'/../src/tomcan/'.$name.'.php', $content);
+        file_put_contents(__DIR__.'/../src/'.$name.'.php', $content);
     }
 
     if ($updated) {
