@@ -20,6 +20,9 @@ if ($list = file_get_contents($url)) {
             $icann = false;
         }
     }
+    // sort lists
+    sort($icann_list);
+    sort($private_list);
 
     $meta = [];
     if ($metaContent = file_get_contents(__DIR__.'/meta.txt')) {
@@ -40,8 +43,9 @@ if ($list = file_get_contents($url)) {
     $updated = false;
 
     // write classes
+    $indent = str_repeat(' ', 8);
     $name = 'PSLIcann';
-    $values = "'icann' => ['".implode("', '", $icann_list)."']";
+    $values = makeArrayString('icann', $icann_list, $indent)."\n".$indent;
     $content = <<<EOF
     <?php
     
@@ -49,7 +53,9 @@ if ($list = file_get_contents($url)) {
     
     class $name extends AbstractPSL
     {
-        protected array \$lists = [$values];
+        protected array \$lists = [
+    $values
+        ];
     }
     
     EOF;
@@ -61,7 +67,7 @@ if ($list = file_get_contents($url)) {
     }
 
     $name = 'PSLFull';
-    $values = "'icann' => ['".implode("', '", $icann_list)."'], 'private' => ['".implode("', '", $private_list)."']";
+    $values = makeArrayString('icann', $icann_list, $indent).",\n".makeArrayString('private', $private_list, $indent);
     $content = <<<EOF
     <?php
     
@@ -69,7 +75,9 @@ if ($list = file_get_contents($url)) {
     
     class $name extends AbstractPSL
     {
-        protected array \$lists = [$values];
+        protected array \$lists = [
+    $values
+        ];
     }
     
     EOF;
@@ -99,4 +107,21 @@ if ($list = file_get_contents($url)) {
     }
 } else {
     throw new RuntimeException('Could not download public prefix list.');
+}
+
+function makeArrayString(string $name, array $values, string $indent = '    '): string
+{
+    $prev = '';
+
+    $output = $indent."'".$name."' => [";
+    foreach ($values as $value) {
+        if ($prev != substr($value, 0, 1)) {
+            $output .= "\n".$indent.'   ';
+            $prev = substr($value, 0, 1);
+        }
+        $output .= " '".$value."',";
+    }
+    $output .= "\n".$indent.']';
+
+    return $output;
 }
