@@ -15,5 +15,20 @@
     "psr-4": {
       "TomCan\\PublicSuffixList\\": "src/"
     }
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.68",
+    "phpstan/phpstan": "^2.1"
+  },
+  "scripts": {
+    "cs": [
+      "php-cs-fixer fix -v --dry-run --diff"
+    ],
+    "cs-apply": [
+      "php-cs-fixer fix -v"
+    ],
+    "phpstan": [
+      "phpstan  analyse --level=10 src build"
+    ]
   }
 }
