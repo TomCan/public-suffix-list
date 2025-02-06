@@ -11,7 +11,8 @@ You can install the library through composer
 composer require tomcan/public-suffix-list
 ```
 
-The ```v1.5.x``` versions of the library support PHP 5.6 and above.
+The ```v1.5.x``` versions of the library support PHP 5.6 and above. This version is no longer maintained and may or may
+not receive list updates, but no new features. 
 
 The ```v2.x.y``` versions of the library support PHP 7.4 and above.
 
