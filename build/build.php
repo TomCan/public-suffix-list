@@ -49,7 +49,7 @@ if ($list = file_get_contents($url)) {
     
     class $name extends AbstractPSL
     {
-        protected \$lists = [$values];
+        protected array \$lists = [$values];
     }
     
     EOF;
@@ -69,7 +69,7 @@ if ($list = file_get_contents($url)) {
     
     class $name extends AbstractPSL
     {
-        protected \$lists = [$values];
+        protected array \$lists = [$values];
     }
     
     EOF;
@@ -92,6 +92,8 @@ if ($list = file_get_contents($url)) {
             $content .= "$key=$value\n";
         }
         if (false !== file_put_contents(__DIR__.'/meta.txt', $content)) {
+            echo 'Updated version of lists have been generated: '.$meta['version'].PHP_EOL;
+        } else {
             throw new RuntimeException('Could not save meta data to meta.txt.');
         }
     }
