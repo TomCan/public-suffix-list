@@ -66,11 +66,6 @@ abstract class AbstractPSL
      */
     public function getFullList(): array
     {
-        $ret = [];
-        foreach ($this->lists as $list) {
-            $ret = array_merge($ret, $list);
-        }
-
-        return $ret;
+        return array_merge(...array_values($this->lists));
     }
 }
