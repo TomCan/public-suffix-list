@@ -4,9 +4,10 @@ namespace TomCan\PublicSuffixList;
 
 abstract class AbstractPSL
 {
-    protected $lists = array();
+    /** @var array<string,string[]> */
+    protected array $lists = [];
 
-    public function isTld($tld)
+    public function isTld(string $tld): bool
     {
         // trim, but also trim dot
         $tld = trim($tld, " \n\r\t\v\x00.");
@@ -19,7 +20,7 @@ abstract class AbstractPSL
         return false;
     }
 
-    public function getType($tld)
+    public function getType(string $tld): ?string
     {
         // trim, but also trim dot
         $tld = trim($tld, " \n\r\t\v\x00.");
@@ -32,7 +33,7 @@ abstract class AbstractPSL
         return null;
     }
 
-    public function getTldOfDomain($domain)
+    public function getTldOfDomain(string $domain): ?string
     {
         // trim, but also trim dot
         $domain = trim($domain, " \n\r\t\v\x00.");
@@ -52,14 +53,20 @@ abstract class AbstractPSL
         return null;
     }
 
-    public function getLists()
+    /**
+     * @return array<string,string[]>
+     */
+    public function getLists(): array
     {
         return $this->lists;
     }
 
-    public function getFullList()
+    /**
+     * @return string[]
+     */
+    public function getFullList(): array
     {
-        $ret = array();
+        $ret = [];
         foreach ($this->lists as $list) {
             $ret = array_merge($ret, $list);
         }
