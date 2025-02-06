@@ -2,7 +2,7 @@
 
 namespace TomCan\PublicSuffixList;
 
-abstract class AbstractPSL
+abstract class AbstractPSL implements PSLInterface
 {
     /** @var array<string,string[]> */
     protected array $lists = [];
