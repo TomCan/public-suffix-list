@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 php build/build.php
 
 source build/meta.txt
