@@ -35,7 +35,7 @@ abstract class AbstractPSL implements PSLInterface
 
     public function getTldOfDomain(string $domain): ?string
     {
-        // trim, but also trim dot
+        // sanetize the domain
         $domain = $this->sanetizeTld($domain);
         while ('' !== $domain) {
             if ($this->isTld($domain)) {

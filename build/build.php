@@ -14,9 +14,9 @@ if ($list = file_get_contents($url)) {
             $tld = trim(strtolower((string) idn_to_ascii((string) explode(' ', $line, 2)[0])), " \n\r\t\v\x00.");
             if ('' != $tld) {
                 if ($icann) {
-                    $icann_list[] = trim($line);
+                    $icann_list[] = $tld;
                 } else {
-                    $private_list[] = trim($line);
+                    $private_list[] = $tld;
                 }
             }
         } elseif (trim($line) == $icann_end) {
