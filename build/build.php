@@ -10,19 +10,30 @@ $icann = true;
 if ($list = file_get_contents($url)) {
     foreach (explode("\n", $list) as $line) {
         if ('' != trim($line) && '//' != substr($line, 0, 2)) {
-            if ($icann) {
-                $icann_list[] = trim($line);
-            } else {
-                $private_list[] = trim($line);
+            // read until first space, convert idn to ascii, make lowercase, and trim including dots, all in one
+            $tld = trim(strtolower((string) idn_to_ascii((string) explode(' ', $line, 2)[0])), " \n\r\t\v\x00.");
+            if ('' != $tld) {
+                if ($icann) {
+                    $icann_list[] = $tld;
+                } else {
+                    $private_list[] = $tld;
+                }
             }
         } elseif (trim($line) == $icann_end) {
             // end of ICANN list
             $icann = false;
         }
     }
-    // sort lists
-    sort($icann_list);
-    sort($private_list);
+    // sort lists by inverse label order (eg. tom.be would be compared as be.tom)
+    $fn_sort = function ($a, $b) {
+        // explode, reverse, implode, compare
+        return strcmp(
+            implode('.', array_reverse(explode('.', $a))),
+            implode('.', array_reverse(explode('.', $b)))
+        );
+    };
+    usort($icann_list, $fn_sort);
+    usort($private_list, $fn_sort);
 
     $meta = [];
     if ($metaContent = file_get_contents(__DIR__.'/meta.txt')) {
@@ -114,13 +125,18 @@ if ($list = file_get_contents($url)) {
  */
 function makeArrayString(string $name, array $values, string $indent = '    '): string
 {
-    $prev = '';
+    $ownLine = ['br', 'it', 'jp', 'no'];
+    $prevChar = $prevPart = '';
 
     $output = $indent."'".$name."' => [";
     foreach ($values as $value) {
-        if ($prev != substr($value, 0, 1)) {
+        // get first character of last part of the tld
+        $lastPart = array_reverse(explode('.', $value))[0];
+        $firstChar = substr($lastPart, 0, 1);
+        if ($prevChar != $firstChar || ($prevPart != $lastPart && (in_array($lastPart, $ownLine) || in_array($prevPart, $ownLine)))) {
             $output .= "\n".$indent.'   ';
-            $prev = substr($value, 0, 1);
+            $prevChar = $firstChar;
+            $prevPart = $lastPart;
         }
         $output .= " '".$value."',";
     }
