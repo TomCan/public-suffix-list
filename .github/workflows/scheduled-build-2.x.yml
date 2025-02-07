@@ -10,9 +10,10 @@ permissions:
   contents: write
 
 jobs:
-  run-update:
+  run-update-2.x:
     runs-on: ubuntu-latest
-    
+    environment: Build updates
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
