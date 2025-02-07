@@ -1,0 +1,56 @@
+name: Scheduled build to update the list
+
+on:
+  schedule:
+    # This schedule is set to run at 00:00 UTC every monday
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  run-update-2.x:
+    runs-on: ubuntu-latest
+    environment: Build updates
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          # version 2.x
+          ref: '2.x'
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+
+      - name: Run build script
+        run: |
+          php build/build.php
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code || echo "::set-output name=changes::true"
+
+      - name: Commit changes
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config --local user.email "actions@users.noreply.github.com"
+          git config --local user.name "Scheduled build"
+          git add .
+          git commit -m "Scheduled build: List updated"
+          git push
+          # version bump
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          if [[ "${BRANCH: -2}" == ".x" ]]
+          then
+            TAGFILTER="${BRANCH:0:-1}"
+            LASTTAG=$(git for-each-ref --sort=creatordate --format '%(refname:short)' refs/tags | grep "^v${TAGFILTER/./\.}" | tail -1)
+            IFS='.' read -r MAJOR MINOR PATCH <<< "${LASTTAG}"
+            NEWTAG="$MAJOR.$MINOR.$((patch + 1))"
+            git tag $NEWTAG
+            git push --tags
+          fi
