@@ -73,6 +73,6 @@ class PSLFull extends AbstractPSL
             'xn--41a.xn--p1acf', 'xn--80aaa0cvac.xn--p1acf', 'xn--90a1af.xn--p1acf', 'xn--90amc.xn--p1acf', 'xn--c1avg.xn--p1acf', 'xn--h1ahn.xn--p1acf', 'xn--h1aliz.xn--p1acf', 'xn--j1adp.xn--p1acf', 'xn--j1aef.xn--p1acf', 'xn--j1ael8b.xn--p1acf', 'botdash.xyz', '*.telebit.xyz',
             'org.yt',
             'cloud66.zone', 'lima.zone', 'stackit.zone', '*.triton.zone',
-        ]
+        ],
     ];
 }

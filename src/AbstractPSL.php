@@ -46,14 +46,14 @@ abstract class AbstractPSL implements PSLInterface
             } else {
                 // try wildcard matching, replace first label with *
                 if (false !== strpos($tld, '.')) {
-                    $wild_tld = '*.' . substr($tld, strpos($tld, '.') + 1);
+                    $wild_tld = '*.'.substr($tld, strpos($tld, '.') + 1);
                 } else {
                     $wild_tld = '*';
                 }
 
-                if (in_array('!' . $wild_tld, $list)) {
+                if (in_array('!'.$wild_tld, $list)) {
                     // wildcard exclusion
-                    return ['type' => $type, 'match' => '!' . $wild_tld, 'value' => $tld];
+                    return ['type' => $type, 'match' => '!'.$wild_tld, 'value' => $tld];
                 } elseif (in_array($wild_tld, $list)) {
                     // wildcard match
                     return ['type' => $type, 'match' => $wild_tld, 'value' => $tld];
@@ -102,14 +102,14 @@ abstract class AbstractPSL implements PSLInterface
 
     private function sanetizeTld(string $tld): string
     {
-        return trim(
-            strtolower(
-                (string) idn_to_ascii(
+        return strtolower(
+            (string) idn_to_ascii(
+                trim(
                     (string) explode(
                         ' ',
-                        $tld, 2)[0]
-                )
-            ),
-            " \n\r\t\v\x00.");
+                        $tld, 2)[0],
+                    " \n\r\t\v\x00.")
+            )
+        );
     }
 }
