@@ -1,0 +1,43 @@
+name: Scheduled build to update the list
+
+on:
+  schedule:
+    # This schedule is set to run at 00:00 UTC every monday
+    - cron: '0 0 * * 1'
+
+jobs:
+  run-update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          # version 2.x
+          ref: '2.x'
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+
+      - name: Run build script
+        run: |
+          php build/build.php
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code || echo "::set-output name=changes::true"
+
+      - name: Commit changes
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          source build/meta.txt
+          git config --local user.email "action@github.com"
+          git config --local user.name "Scheduled build"
+          git add .
+          git commit -m "Scheduled build: List updated"
+          git push
+          git tag $version
+          git push --tags
