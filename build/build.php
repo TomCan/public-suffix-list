@@ -24,9 +24,16 @@ if ($list = file_get_contents($url)) {
             $icann = false;
         }
     }
-    // sort lists
-    sort($icann_list);
-    sort($private_list);
+    // sort lists by inverse label order (eg. tom.be would be compared as be.tom)
+    $fn_sort = function ($a, $b) {
+        // explode, reverse, implode, compare
+        return strcmp(
+            implode('.', array_reverse(explode('.', $a))),
+            implode('.', array_reverse(explode('.', $b)))
+        );
+    };
+    usort($icann_list, $fn_sort);
+    usort($private_list, $fn_sort);
 
     $meta = [];
     if ($metaContent = file_get_contents(__DIR__.'/meta.txt')) {
@@ -118,13 +125,18 @@ if ($list = file_get_contents($url)) {
  */
 function makeArrayString(string $name, array $values, string $indent = '    '): string
 {
-    $prev = '';
+    $ownLine = ['br', 'it', 'jp', 'no'];
+    $prevChar = $prevPart = '';
 
     $output = $indent."'".$name."' => [";
     foreach ($values as $value) {
-        if ($prev != substr($value, 0, 1)) {
+        // get first character of last part of the tld
+        $lastPart = array_reverse(explode('.', $value))[0];
+        $firstChar = substr($lastPart, 0, 1);
+        if ($prevChar != $firstChar || ($prevPart != $lastPart && (in_array($lastPart, $ownLine) || in_array($prevPart, $ownLine)))) {
             $output .= "\n".$indent.'   ';
-            $prev = substr($value, 0, 1);
+            $prevChar = $firstChar;
+            $prevPart = $lastPart;
         }
         $output .= " '".$value."',";
     }
