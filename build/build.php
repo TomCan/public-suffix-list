@@ -10,10 +10,14 @@ $icann = true;
 if ($list = file_get_contents($url)) {
     foreach (explode("\n", $list) as $line) {
         if ('' != trim($line) && '//' != substr($line, 0, 2)) {
-            if ($icann) {
-                $icann_list[] = trim($line);
-            } else {
-                $private_list[] = trim($line);
+            // read until first space, convert idn to ascii, make lowercase, and trim including dots, all in one
+            $tld = trim(strtolower((string) idn_to_ascii((string) explode(' ', $line, 2)[0])), " \n\r\t\v\x00.");
+            if ('' != $tld) {
+                if ($icann) {
+                    $icann_list[] = trim($line);
+                } else {
+                    $private_list[] = trim($line);
+                }
             }
         } elseif (trim($line) == $icann_end) {
             // end of ICANN list

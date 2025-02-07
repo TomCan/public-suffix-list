@@ -10,7 +10,7 @@ abstract class AbstractPSL implements PSLInterface
     public function isTld(string $tld): bool
     {
         // trim, but also trim dot
-        $tld = trim($tld, " \n\r\t\v\x00.");
+        $tld = $this->sanetizeTld($tld);
         foreach ($this->lists as $list) {
             if (in_array($tld, $list)) {
                 return true;
@@ -23,7 +23,7 @@ abstract class AbstractPSL implements PSLInterface
     public function getType(string $tld): ?string
     {
         // trim, but also trim dot
-        $tld = trim($tld, " \n\r\t\v\x00.");
+        $tld = $this->sanetizeTld($tld);
         foreach ($this->lists as $type => $list) {
             if (in_array($tld, $list)) {
                 return $type;
@@ -36,7 +36,7 @@ abstract class AbstractPSL implements PSLInterface
     public function getTldOfDomain(string $domain): ?string
     {
         // trim, but also trim dot
-        $domain = trim($domain, " \n\r\t\v\x00.");
+        $domain = $this->sanetizeTld($domain);
         while ('' !== $domain) {
             if ($this->isTld($domain)) {
                 return $domain;
@@ -67,5 +67,18 @@ abstract class AbstractPSL implements PSLInterface
     public function getFullList(): array
     {
         return array_merge(...array_values($this->lists));
+    }
+
+    private function sanetizeTld(string $tld): string
+    {
+        return trim(
+            strtolower(
+                (string) idn_to_ascii(
+                    (string) explode(
+                        ' ',
+                        $tld, 2)[0]
+                )
+            ),
+            " \n\r\t\v\x00.");
     }
 }
