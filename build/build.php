@@ -25,7 +25,7 @@ if ($list = file_get_contents($url)) {
         }
     }
     // sort lists by inverse label order (eg. tom.be would be compared as be.tom)
-    $fn_sort = function ($a, $b) {
+    $fn_sort = function (string $a, string $b) {
         // explode, reverse, implode, compare
         return strcmp(
             implode('.', array_reverse(explode('.', $a))),
@@ -56,7 +56,7 @@ if ($list = file_get_contents($url)) {
     // write classes
     $indent = str_repeat(' ', 8);
     $name = 'PSLIcann';
-    $values = makeArrayString('icann', $icann_list, $indent)."\n".$indent;
+    $values = makeArrayString('icann', $icann_list, $indent);
     $content = <<<EOF
     <?php
     
@@ -78,7 +78,7 @@ if ($list = file_get_contents($url)) {
     }
 
     $name = 'PSLFull';
-    $values = makeArrayString('icann', $icann_list, $indent).",\n".makeArrayString('private', $private_list, $indent);
+    $values = makeArrayString('icann', $icann_list, $indent)."\n".makeArrayString('private', $private_list, $indent);
     $content = <<<EOF
     <?php
     
@@ -140,7 +140,7 @@ function makeArrayString(string $name, array $values, string $indent = '    '): 
         }
         $output .= " '".$value."',";
     }
-    $output .= "\n".$indent.']';
+    $output .= "\n".$indent.'],';
 
     return $output;
 }
