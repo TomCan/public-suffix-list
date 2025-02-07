@@ -126,7 +126,7 @@ function makeArrayString(string $name, array $values, string $indent = '    '): 
     foreach ($values as $value) {
         // get first character of last part of the tld
         $lastPart = array_reverse(explode('.', $value))[0];
-        $firstChar = substr($lastPart, 0, 1);
+        $firstChar = (string) substr($lastPart, 0, 1);
         if ($prevChar != $firstChar || ($prevPart != $lastPart && (in_array($lastPart, $ownLine) || in_array($prevPart, $ownLine)))) {
             $output .= "\n".$indent.'   ';
             $prevChar = $firstChar;
