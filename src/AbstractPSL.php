@@ -102,14 +102,14 @@ abstract class AbstractPSL implements PSLInterface
 
     private function sanetizeTld(string $tld): string
     {
-        return trim(
-            strtolower(
-                (string) idn_to_ascii(
+        return strtolower(
+            (string) idn_to_ascii(
+                trim(
                     (string) explode(
                         ' ',
-                        $tld, 2)[0]
-                )
-            ),
-            " \n\r\t\v\x00.");
+                        $tld, 2)[0],
+                    " \n\r\t\v\x00.")
+            )
+        );
     }
 }
