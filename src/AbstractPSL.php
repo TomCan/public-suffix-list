@@ -9,10 +9,8 @@ abstract class AbstractPSL implements PSLInterface
 
     public function isTld(string $tld): bool
     {
-        // trim, but also trim dot
-        $tld = $this->sanetizeTld($tld);
-        foreach ($this->lists as $list) {
-            if (in_array($tld, $list)) {
+        if ($match = $this->getMatch($tld)) {
+            if ('!' !== substr($match['match'], 0, 1)) {
                 return true;
             }
         }
@@ -22,11 +20,44 @@ abstract class AbstractPSL implements PSLInterface
 
     public function getType(string $tld): ?string
     {
-        // trim, but also trim dot
+        if ($match = $this->getMatch($tld)) {
+            if ('!' !== substr($match['match'], 0, 1)) {
+                return $match['type'];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array{'type': string, 'match': string, 'value': string}|null
+     */
+    private function getMatch(string $tld): ?array
+    {
+        // sanetize tld
         $tld = $this->sanetizeTld($tld);
         foreach ($this->lists as $type => $list) {
-            if (in_array($tld, $list)) {
-                return $type;
+            if (in_array('!'.$tld, $list)) {
+                // exact exclusion
+                return ['type' => $type, 'match' => '!'.$tld, 'value' => $tld];
+            } elseif (in_array($tld, $list)) {
+                // exact match
+                return ['type' => $type, 'match' => $tld, 'value' => $tld];
+            } else {
+                // try wildcard matching, replace first label with *
+                if (false !== strpos($tld, '.')) {
+                    $wild_tld = '*.' . substr($tld, strpos($tld, '.') + 1);
+                } else {
+                    $wild_tld = '*';
+                }
+
+                if (in_array('!' . $wild_tld, $list)) {
+                    // wildcard exclusion
+                    return ['type' => $type, 'match' => '!' . $wild_tld, 'value' => $tld];
+                } elseif (in_array($wild_tld, $list)) {
+                    // wildcard match
+                    return ['type' => $type, 'match' => $wild_tld, 'value' => $tld];
+                }
             }
         }
 
